@@ -38,7 +38,9 @@ class Player(pygame.sprite.Sprite):
         self.rect.y = self.y
 
     def update(self):
+        '''This function handles the updates to the player character'''
         self.movement() # Call the movemnt function
+        self.collide_enemy() # Call for enemy collision function
 
         # Update the actual co-ordinates of the player character
         self.rect.x += self.x_change # Horizontal direction
@@ -68,6 +70,16 @@ class Player(pygame.sprite.Sprite):
             self.y_change += PLAYER_VEL
             self.facing = 'down'
     
+    def collide_enemy(self):
+        '''This function handles collissions with enemy character'''
+        hits = pygame.sprite.spritecollide(self, self.game.enemies, True)
+        if hits:
+            self.width += 10
+            self.height += 10
+            self.image = pygame.Surface([self.width, self.height])
+            self.image.fill((0, 255, 0))
+            self.rect = pygame.Rect.inflate(self.rect, 10, 10)
+
     def collide_blocks(self, direction):
         '''Function for collission handling with blocks'''
         # For horizontal movement
@@ -117,7 +129,8 @@ class Enemy(pygame.sprite.Sprite):
         self.facing = random.choice(['left','right', 'up', 'down'])
 
         # Set some movement parameters
-        self.movement_loop = 0
+        self.movement_loop_x = 0
+        self.movement_loop_y = 0
         self.max_travel = random.randint(50, 100)
 
         # Initialise the enemy character
@@ -146,29 +159,44 @@ class Enemy(pygame.sprite.Sprite):
 
     def movement(self):
         '''This function handles the enemy character movement'''
+        # if the character is facing left
         if self.facing == 'left':
-            self.x_change -= ENEMY_SPEED
-            self.movement_loop -= 1
-            if self.movement_loop <= -self.max_travel:
+            self.x_change -= ENEMY_SPEED # move
+            self.movement_loop_x -= 1 # add one to movement loop
+            # when the movement loop number matches to...
+            # the randomly generated max travel number
+            if self.movement_loop_x <= -self.max_travel:
+                # choose a random direction other than left 
                 self.facing = random.choice(['right', 'up', 'down'])
 
-
+        # if the character is facing right
         if self.facing == 'right':
-            self.x_change += ENEMY_SPEED
-            self.movement_loop += 1
-            if self.movement_loop >= self.max_travel:
+            self.x_change += ENEMY_SPEED # move
+            self.movement_loop_x += 1 #add one to movement loop
+            # when the movement loop number matches to...
+            # the randomly generated max travel number
+            if self.movement_loop_x >= self.max_travel:
+                # choose a random direction other than right
                 self.facing = random.choice(['left', 'up', 'down'])
 
+        # if the character is facing up
         if self.facing == 'up':
-            self.y_change -= ENEMY_SPEED
-            self.movement_loop -= 1
-            if self.movement_loop <= -self.max_travel:
+            self.y_change -= ENEMY_SPEED # move
+            self.movement_loop_y -= 1 # add one to the movement loop
+            # when the movement loop number matches to...
+            # the randomly generated max travel number
+            if self.movement_loop_y <= -self.max_travel:
+                # choose a random direction other than up
                 self.facing = random.choice(['left','right', 'down'])
 
+        # if the character is facing down
         if self.facing == 'down':
-            self.y_change += ENEMY_SPEED
-            self.movement_loop += 1
-            if self.movement_loop >= self.max_travel:
+            self.y_change += ENEMY_SPEED # move
+            self.movement_loop_y += 1 # add one to the movement loop
+            # when the movement loop number matches to...
+            # the randomly generated max travel number
+            if self.movement_loop_y >= self.max_travel:
+                # choose a random direction other than down
                 self.facing = random.choice(['left','right', 'up'])
 
     def collide_blocks(self, direction):
