@@ -32,7 +32,8 @@ class Game:
                     Enemy(self, j, i)
                 # If tilemap say P, spawn player sprite
                 if column == "P":
-                    Player(self, j, i)
+                    self.player = Player(self, j, i)
+                    
 
     def new(self):
         '''Sets up the variables for a new game'''
@@ -43,6 +44,8 @@ class Game:
         self.blocks = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
+
+        self.player = None # ensure player attribute exists before creating tilemap
 
         self.createTilemap() # Call the tilemap function
 
